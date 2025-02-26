@@ -37,5 +37,3 @@ SELECT page_id FROM pages AS a
 JOIN (SELECT page_id, liked_date FROM page_likes
 WHERE liked_date IS NULL) AS b
 ON a.page_id=b.page_id
-
---Bài 5
