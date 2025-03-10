@@ -33,7 +33,8 @@ SELECT COUNT (policy_holder_id) AS policy_holder_count
 FROM count_holder 
 
 --Bài 4
-SELECT page_id FROM pages AS a
-JOIN (SELECT page_id, liked_date FROM page_likes
-WHERE liked_date IS NULL) AS b
-ON a.page_id=b.page_id
+SELECT a.page_id
+FROM pages AS a
+LEFT JOIN page_likes AS b
+  ON a.page_id = b.page_id
+WHERE b.page_id IS NULL;
