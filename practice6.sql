@@ -38,3 +38,95 @@ FROM pages AS a
 LEFT JOIN page_likes AS b
   ON a.page_id = b.page_id
 WHERE b.page_id IS NULL;
+
+--Bài 5:
+WITH count_user AS 
+(SELECT  user_id	
+FROM user_actions 
+WHERE EXTRACT(MONTH FROM event_date) in (6,7) 
+AND EXTRACT(YEAR FROM event_date) = 2022 
+GROUP BY user_id 
+HAVING COUNT(DISTINCT EXTRACT(MONTH FROM event_date)) = 2)
+
+SELECT 7 AS month_ , COUNT(*) AS number_of_user 
+FROM count_user;
+
+--Bài 6
+WITH tran_count AS(
+SELECT 
+DATE_FORMAT(trans_date, '%Y-%m') AS month,
+country,
+COUNT(*) AS trans_count,
+SUM(amount) AS trans_total_amount
+FROM Transactions
+GROUP BY month, country)
+,
+approved_count AS(
+SELECT 
+DATE_FORMAT(trans_date, '%Y-%m') AS month,
+country,
+COUNT(*) AS approved_count,
+SUM(amount) AS approved_total_amount
+FROM Transactions
+WHERE state ='approved'
+GROUP BY month, country)
+
+SELECT a.month, a.country, a.trans_count, b.approved_count, 
+a.trans_total_amount,
+b.approved_total_amount
+FROM tran_count AS a
+LEFT JOIN approved_count AS b
+ON a.month=b.month AND a.country=b.country
+
+--Bài 7
+WITH no_of_year AS(
+SELECT product_id, year, quantity, price,
+RANK () OVER (PARTITION BY product_id ORDER BY year) AS year_number
+FROM sales)
+
+SELECT product_id, year AS first_year, quantity, price
+FROM no_of_year
+WHERE year_number = 1
+
+--Bài 8
+SELECT customer_id
+FROM customer
+GROUP BY customer_id
+HAVING COUNT(DISTINCT product_key) = (SELECT count(product_key) FROM product)
+
+
+--Bài 9
+SELECT employee_id
+FROM Employees
+WHERE salary < 30000
+AND manager_id NOT IN (SELECT employee_id FROM employees)
+ORDER BY employee_id ASC
+
+--Bài 10
+WITH twt_duplicate AS
+(SELECT company_id, title, description, 
+COUNT(*) FROM job_listings
+GROUP BY company_id, title, description 
+HAVING COUNT(*) > 1)
+SELECT COUNT(*) AS duplicate_companies FROM twt_duplicate;
+
+--Bài 11
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
