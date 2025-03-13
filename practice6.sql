@@ -111,8 +111,41 @@ HAVING COUNT(*) > 1)
 SELECT COUNT(*) AS duplicate_companies FROM twt_duplicate;
 
 --Bài 11
+WITH gr_user AS
+(SELECT u.name FROM users AS u
+JOIN MovieRating as mr
+ON u.user_id=mr.user_id
+GROUP BY u.user_id
+ORDER BY COUNT(*) DESC, u.name ASC
+LIMIT 1)
+,
+gr_movie AS (
+SELECT m.title FROM movies AS m
+JOIN MovieRating AS mr
+ON m.movie_id=mr.movie_id
+WHERE month(created_at) = 2
+GROUP BY m.movie_id
+ORDER BY AVG(rating) DESC, m.title ASC
+LIMIT 1)
+
+SELECT name AS results FROM gr_user
+UNION ALL
+SELECT title AS results FROM gr_movie
 
 
+--Bài 12
+WITH ids AS (
+    SELECT accepter_id AS id
+    FROM RequestAccepted
+    UNION ALL
+    SELECT requester_id AS id
+    FROM RequestAccepted)
+  
+SELECT id,COUNT(id) AS num
+FROM ids
+GROUP BY id
+ORDER BY COUNT(id) DESC
+LIMIT 1
 
 
 
